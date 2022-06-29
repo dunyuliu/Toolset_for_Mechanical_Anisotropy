@@ -1,6 +1,6 @@
 # How to install FEniCS?
 
-NOTE: in May 2022, a newer version of FEniCS - FEniCSx version 0.4 was released. However, the work in this repository was developed using the lastest stable release of legacy FEniCS version 2019.1.0, which was released in April 2019.
+NOTE: in May 2022, a newer version of FEniCS - FEniCSx version 0.4 - was released. However, the work in this repository was developed using the lastest stable release of legacy FEniCS version 2019.1.0, which was released in April 2019.
 
 A convenient way to install FEniCS across operating platforms is through Anaconda. [Anaconda](https://www.anaconda.com/) is a good cross-platform computing environment to perform Python/R data science and machine learning applications with thousands of open-source packages and libraries. 
 
