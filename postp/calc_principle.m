@@ -1,14 +1,15 @@
-function [smax,smin,nx0,ny0,nx1,ny1,J2] = calc_principle(sxx,syy,sxy)
-%CALC_PRINCIPLE Summary of this function goes here
-% 10/22/2021: add the 7th output J2, the second invariant.
-% Created on 10/12/2021 by Dunyu Liu.
-%   calc_principle calculate principle stresses and their orientations.
-% Inputs include:
-% sxx, syy, sxy three components of a 2D stress tensor.
-% Outputs are:
-% smax, smin are maximum and minimum principle stresses.
-% nx0, ny0, nx1, ny1 are unit vectors for smax and smin's orientations.
+function [smax,smin,nx0,ny0,nx1,ny1,J2] = calc_principal(sxx,syy,sxy)
+%{
+Summary of 'calc_principal'
+    It calculates 2D principle stresses and their orientations.
 
+Input
+    sxx, syy, sxy three components of a 2D stress tensor.
+
+Output
+    smax, smin are maximum and minimum principle stresses.
+    nx0, ny0, nx1, ny1 are unit vectors for smax and smin's orientations.
+%}
 t = atand(2*sxy/(sxx-syy))/2;
 
 Q = [cosd(t), sind(t);

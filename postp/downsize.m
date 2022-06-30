@@ -1,9 +1,9 @@
 function [id] = downsize(nx,ny,dnx,dny)
-%DOWNSIZE Summary of this function goes here
-%   Created on 10/22/2021.
-% The function will downsize a 1D array to a lower resolution defined by
-% nx,ny (original grid) and (nx/dnx, ny/dny).
-
+%{ 
+Summary of 'downsize'
+    The function will downsize a 1D array to a lower resolution defined by
+    nx,ny (original grid) and (nx/dnx, ny/dny).
+%}
 nx1 = nx/dnx;
 ny1 = ny/dny;
 
