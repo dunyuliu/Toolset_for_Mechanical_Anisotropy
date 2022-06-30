@@ -11,10 +11,9 @@ clear all; close all;
 % The scripts calls functions 
 % -calc_principal_3d.m and
 % -draw_bar_for_principle_3d.m.
-
 model = 1;
 if model == 1
-    path = './res/case32/20220427_Contrast10_CG2_CG1_Leech_River_Schist_2/'; % Simulated on 20220121 for more thetas. 
+    path = '../res/case32/20220629/'; % Simulated on 20220121 for more thetas. 
     plot_or_not = 1;
     ny = 40;
     mid_cell_x = 2.5042; mid_cell_y = 0.7125;

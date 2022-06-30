@@ -12,14 +12,15 @@ clear all; close all;
 % -calc_principal_3d.m and
 % -draw_bar_for_principle_3d.m.
 
+addpath('./colormap/crameri'); % Using the colormap by 
 model = 1;
 if model == 1
-    path = './res_Case3/20220405_n40_Contrast10_CG2_CG1/'; % Simulated on 20220121 for more thetas. 
+    path = '../res/case31/20220629/'; % Simulated on 20220121 for more thetas. 
     plot_or_not = 1;
     ny = 40;
     mid_cell_x = 2.5042; mid_cell_y = 0.7125;
     %the = 0:2.5:90;
-    the = 45;
+    the = 12.5;
     nm = length(the);
     ang_rec = zeros(3,nm);    
 end
@@ -191,21 +192,21 @@ h=figure(1);
 set(h, 'position', [50 50 1000 800]);
 
 subplot(3,2,1)
-slice(xq,yq,zq,Vq_ux,0.5,0.5,0);
+slice(xq,yq,zq,Vq_ux,0.5,0,0.5);
 shading flat; crameri('vik', Number_of_Colors); colorbar;
 xlabel('X'); ylabel('Y'); zlabel('Z'); 
 title('Velocity-x'); 
 set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
 
 subplot(3,2,2)
-slice(xq,yq,zq,Vq,0.5,0.5,0);
+slice(xq,yq,zq,Vq,0.5,0,0.5);
 shading flat; crameri('vik', Number_of_Colors); colorbar;
 xlabel('X'); ylabel('Y'); zlabel('Z'); 
 title('Pressure');
 set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
 
 subplot(3,2,3)
-slice(xq,yq,zq,I2,0.5,0.5,0);
+slice(xq,yq,zq,I2,0.5,0,0.5);
 shading flat; crameri('vik', Number_of_Colors); colorbar;
 xlabel('X'); ylabel('Y'); zlabel('Z'); 
 title('2nd Stress Invariant');
@@ -213,9 +214,9 @@ set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
 
 for ifig = 1:3
     subplot(3,2,3+ifig)
-    ix = 6;
     iy = 6;
-    for iz = 1:2:n
+    iz = 6;
+    for ix = 1:2:n
         s = sp1(ix,iy,iz);
         cx = xq(ix,iy,iz);
         cy = yq(ix,iy,iz);

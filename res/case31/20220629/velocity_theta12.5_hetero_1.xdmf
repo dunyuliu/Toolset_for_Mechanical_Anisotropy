@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Xdmf Version="3.0">
+  <Domain>
+    <Grid Name="mesh" GridType="Uniform">
+      <Topology NumberOfElements="6000" TopologyType="Tetrahedron" NodesPerElement="4">
+        <DataItem Dimensions="6000 4" NumberType="UInt" Format="HDF">velocity_theta12.5_hetero_1.h5:/Mesh/mesh/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XYZ">
+        <DataItem Dimensions="1331 3" Format="HDF">velocity_theta12.5_hetero_1.h5:/Mesh/mesh/geometry</DataItem>
+      </Geometry>
+      <Attribute Name="f_39-0" AttributeType="Vector" Center="Node">
+        <DataItem Dimensions="1331 3" Format="HDF">velocity_theta12.5_hetero_1.h5:/VisualisationVector/0</DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>
