@@ -12,16 +12,23 @@ For models with simple geometries, FEniCS itself provides convenient functions t
 [Matlab](https://matplotlib.org) scripts are used to visalize the results, which are described in the following section.
 
 ## How to use the repo? 
+### Code
 The /src folder contains the main jupyter notebook Stokes_Mechanical_Anisotropy.ipynb, and two python scripts prepare_case.py and lib.py that are imported by the main code. prepare_case.py is designed to customize the mesh, function space, boundary conditions for different models. Currently, it hosts case 30, 31, and 32, which are presented in the article. 
 
 To use Stokes_Mechanical_Anisotropy.ipynb, make sure FEniCS is installed and the jupyter notebook is opened in a FEniCS environment. Then, set up the parameter case, and run the code.
 
 The /postp folder contains Matlab function to compute the analytical solution, and postprocessing scripts to plot figures presented in the article. 
 
+To run the analytical solution, test_analytic.m is an exmaple.
+
+### Post-processing
+The /postp folder also contains Matlab post-processing scripts to plot figures presented in the article. 
 The /postp/colormap/crameri contains the colormap from Fabio Crameri, cited as Crameri, Fabio. Scientific Colour Maps. Zenodo, 2019, doi:10.5281/ZENODO.1243862, and downloadable from this [link](https://www.mathworks.com/matlabcentral/fileexchange/68546-crameri-perceptually-uniform-scientific-colormaps). For usage and distribution, please refer the license.txt under /postp/colormap/crameri. 
 
+### Results
 The /res folder contains simulation results in .h5 and .xdmf formats for velocity, stress, strain_rate, and pressure. 
 
+### Mesh and others
 The /msh contains the mesh files for case 32, created by Gmsh and converted to formats readable from FEniCS. 
 
 ## Copyright and distribution
