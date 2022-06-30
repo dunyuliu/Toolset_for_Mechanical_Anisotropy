@@ -12,84 +12,49 @@ clear all; close all;
 % -calc_principal_3d.m and
 % -draw_bar_for_principle_3d.m.
 addpath('./colormap/crameri'); % Using the colormap by 
-model = 1;
-if model == 1
-    path = '../res/case30/20220629/'; % Simulated on 20220121 for more thetas. 
-    plot_or_not = 1;
-    ny = 40;
-    mid_cell_x = 2.5042; mid_cell_y = 0.7125;
-    %the = 0:2.5:90;
-    the = 10;
-    nm = length(the);
-    ang_rec = zeros(3,nm);    
-end
+path = '../res/case30/20220629/'; % Simulated on 20220121 for more thetas. 
+theta = 10;
 
-
-%colormap cool; 
 Number_of_Colors = 21;
 pos = [10, 50, 1450, 1450];
-pos1 = [10, 50, 800, 900];
-p_or_J2 = 0; % 0: use pressure as the background; 1: use J2 of stress tensor as background.
-% If n is 40, ny should be 40.
-ny = 40; nx = 5*ny;
-meshstyle = 'crossed';
-fac=2; % for crossed mesh
-dny = 4; dnx = 20*fac;
-dx = 1/ny;
-totm = 4; nfigx = 4; nfigy = 1;
+hete = 1;
 
-% add some basic parameters for analytic solution.
-e = 1; es = 0.1; a1 = 0.5; a2 = 0.9; 
-for m = 1:nm
-    theta = the(m);
-    hete = 1; 
-    nfig = m;
-    if m>=4
-        nfig = 4;
-    end    
-    
-    geo = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/geometry')';
-    elems = double(h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/topology'))'+1;
-    x = geo(:,1); y = geo(:,2); z = geo(:,3);
-    % quadratic elements
-    uFE = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    ux = uFE(:,1); uy = uFE(:,2); uz = uFE(:,3);
-    
-    % Simply use the stokes demo definition for p.
-    % For CG1 and DG1, p is defined on nodes.
-    p = h5read(strcat(path,'pressure_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    %p=-p;
-    StressFE = h5read(strcat(path,'stress_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    sxx0 = StressFE(:,1); sxy0 = StressFE(:,2); sxz0 = StressFE(:,3);
-    syy0 = StressFE(:,5); syz0 = StressFE(:,6);
-    szz0 = StressFE(:,9); 
-    %sxx0 = sxx0-p;
-    %syy0 = syy0-p;
-    Strain_rate = h5read(strcat(path,'strain_rate_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    srxx0 = Strain_rate(:,1); srxy0 = Strain_rate(:,2); srxz0 = Strain_rate(:,3);
-    sryy0 = Strain_rate(:,5); sryz0 = Strain_rate(:,6);
-    srzz0 = Strain_rate(:,9);
+geo = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/geometry')';
+elems = double(h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/topology'))'+1;
+x = geo(:,1); y = geo(:,2); z = geo(:,3);
 
-    nele = size(elems,1);
+uFE = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+ux = uFE(:,1); uy = uFE(:,2); uz = uFE(:,3);
 
-    for i = 1:nele
-        x0 = 0;
-        y0 = 0;
-        z0 = 0;
-        for j = 1:4
-            x0 = geo(elems(i,j),1) + x0;
-            y0 = geo(elems(i,j),2) + y0;
-            z0 = geo(elems(i,j),3) + z0;
-        end
-        C(i,1) = x0/4;
-        C(i,2) = y0/4;
-        C(i,3) = z0/4;      
-        
-%         stmp = [sxx0(i),syy0(i),szz0(i),sxy0(i),sxz0(i),syz0(i)];
-%         [V, D] = calc_principal_3d(stmp); 
-%         sp(i,1) = D(1,1); sp(i,2) = D(2,2); sp(i,3) = D(3,3);
-%         n1(i,1:3) = V(1:3,1)'; n2(i,1:3) = V(1:3,2)'; n3(i,1:3) = V(1:3,3)'; 
+% Simply use the stokes demo definition for p.
+% For CG1 and DG1, p is defined on nodes.
+p = h5read(strcat(path,'pressure_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+%p=-p;
+StressFE = h5read(strcat(path,'stress_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+sxx0 = StressFE(:,1); sxy0 = StressFE(:,2); sxz0 = StressFE(:,3);
+syy0 = StressFE(:,5); syz0 = StressFE(:,6);
+szz0 = StressFE(:,9); 
+%sxx0 = sxx0-p;
+%syy0 = syy0-p;
+Strain_rate = h5read(strcat(path,'strain_rate_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+srxx0 = Strain_rate(:,1); srxy0 = Strain_rate(:,2); srxz0 = Strain_rate(:,3);
+sryy0 = Strain_rate(:,5); sryz0 = Strain_rate(:,6);
+srzz0 = Strain_rate(:,9);
+
+nele = size(elems,1);
+
+for i = 1:nele
+    x0 = 0;
+    y0 = 0;
+    z0 = 0;
+    for j = 1:4
+        x0 = geo(elems(i,j),1) + x0;
+        y0 = geo(elems(i,j),2) + y0;
+        z0 = geo(elems(i,j),3) + z0;
     end
+    C(i,1) = x0/4;
+    C(i,2) = y0/4;
+    C(i,3) = z0/4;      
 end
 %% 
 Fn=scatteredInterpolant(geo(:,1),geo(:,2),geo(:,3),p);
@@ -110,16 +75,6 @@ F_srzz=scatteredInterpolant(C(:,1),C(:,2),C(:,3),srzz0(:));
 F_srxy=scatteredInterpolant(C(:,1),C(:,2),C(:,3),srxy0(:));
 F_srxz=scatteredInterpolant(C(:,1),C(:,2),C(:,3),srxz0(:));
 F_sryz=scatteredInterpolant(C(:,1),C(:,2),C(:,3),sryz0(:));
-
-% F_n1x=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n1(:,1));
-% F_n1y=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n1(:,2));
-% F_n1z=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n1(:,3));
-% F_n2x=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n2(:,1));
-% F_n2y=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n2(:,2));
-% F_n2z=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n2(:,3));
-% F_n3x=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n3(:,1));
-% F_n3y=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n3(:,2));
-% F_n3z=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n3(:,3));
 
 dx = 0.1;
 [xq,yq,zq] = meshgrid(dx/2:dx:1-dx/2, dx/2:dx:1-dx/2, dx/2:dx:1-dx/2); 
@@ -142,15 +97,6 @@ Vq = Fn(xq,yq,zq);
 Vq_ux = F_ux(xq,yq,zq);
 Vq_uy = F_uy(xq,yq,zq);
 Vq_uz = F_uz(xq,yq,zq);
-% Vq_n1x = F_n1x(xq,yq,zq);
-% Vq_n1y = F_n1y(xq,yq,zq);
-% Vq_n1z = F_n1z(xq,yq,zq);
-% Vq_n2x = F_n2x(xq,yq,zq);
-% Vq_n2y = F_n2y(xq,yq,zq);
-% Vq_n2z = F_n2z(xq,yq,zq);
-% Vq_n3x = F_n3x(xq,yq,zq);
-% Vq_n3y = F_n3y(xq,yq,zq);
-% Vq_n3z = F_n3z(xq,yq,zq);
 
 [m,l,n] = size(sxx1);
 for i = 1:m
