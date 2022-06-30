@@ -1,12 +1,20 @@
 from dolfin import *
+import math
 
 # This script hosts the function prepare_case that helps customize the mesh, function space, boundary conditions for different models.
 # 
-def prepare_case(case, path, name, n):
+def prepare_case(case, path, name, n, delta, alpha):
     
     
     if case == 30:
         print('Simulating Case 30: 3D box model with a horizontal anisotropic layer.')
+        
+        theta = delta
+        norm1 = cos(theta/180*math.pi)*cos(alpha/180*math.pi)
+        norm2 = cos(theta/180*math.pi)*sin(alpha/180*math.pi)
+        norm3 = sin(theta/180*math.pi)    
+        print('Normal vectors for anisotrpy are ', norm1, norm2, norm3, 'in this scenario ...')
+    
         mesh = UnitCubeMesh(n, n, n)
         dim = 3
         len1 = 1
@@ -121,6 +129,13 @@ def prepare_case(case, path, name, n):
         
     elif case == 31: 
         print('Simulating Case 31: 3D box model with a vertical SAF fault zone')
+        
+        theta = 90 + delta
+        norm1 = cos(theta/180*math.pi)
+        norm2 = sin(theta/180*math.pi)
+        norm3 = 0    
+        print('Normal vectors for anisotrpy are ', norm1, norm2, norm3, 'in this scenario ...')
+    
         mesh = UnitCubeMesh(n, n, n)
         dim = 3
         len1 = 1
@@ -220,6 +235,13 @@ def prepare_case(case, path, name, n):
         
     if case == 32: # Cascadia Leech River Schist    
         print('Simulating Case 32: Simplified 3D box model with the Leech River Schist above Cascadia Subduction Zone')
+
+        theta = 90 + delta
+        norm1 = cos(theta/180*math.pi)
+        norm2 = sin(theta/180*math.pi)
+        norm3 = 0    
+        print('Normal vectors for anisotrpy are ', norm1, norm2, norm3, 'in this scenario ...')
+        
         # Load mesh
         dim = 3
         mesh = Mesh(path + name + '.xml')
@@ -258,4 +280,4 @@ def prepare_case(case, path, name, n):
             DirichletBC(W.sub(0).sub(2), Constant((0.0)), boundaries, bottom)]
         
         f = Constant((0.0, 0.0, 0.0)) # body force. Set to zero in this case.
-    return mesh, boundaries, mf, bcs, f, bound_name_list, dim, W
+    return mesh, boundaries, mf, bcs, f, bound_name_list, dim, W, norm1, norm2, norm3
