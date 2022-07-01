@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Xdmf Version="3.0">
+  <Domain>
+    <Grid Name="mesh" GridType="Uniform">
+      <Topology NumberOfElements="32000" TopologyType="Triangle" NodesPerElement="3">
+        <DataItem Dimensions="32000 3" NumberType="UInt" Format="HDF">stress_theta67.5_hetero_1.h5:/Mesh/mesh/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XY">
+        <DataItem Dimensions="16241 2" Format="HDF">stress_theta67.5_hetero_1.h5:/Mesh/mesh/geometry</DataItem>
+      </Geometry>
+      <Attribute Name="Stress" AttributeType="Tensor" Center="Cell">
+        <DataItem Dimensions="32000 9" Format="HDF">stress_theta67.5_hetero_1.h5:/VisualisationVector/0</DataItem>
+      </Attribute>
+    </Grid>
+  </Domain>
+</Xdmf>

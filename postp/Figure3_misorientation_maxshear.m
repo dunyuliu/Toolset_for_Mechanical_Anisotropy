@@ -1,13 +1,15 @@
 clear all; close all;
+%{
+Summary
 
-% 3/3/2022 copied from Figure2_misorientation.m by Dunyu Liu. 
-% The script is used to visualize the stress heterogeneity associated with
-% varying normal directors of weak anisotropy. 
-% Function dependency: the script calls on the following functions:
-    % analytic: FORM: [d,sig11,sig12,sig22,u1, p] = analytic(a1, a2 , n1, n2, es, e, dd)
-    % calc_principle: FORM: calc_principle(sxx,syy,sxy)
-    % draw_bar_for_principle_stress: FORM: draw_bar_for_principle_stress(s,nx,ny,cx,cy,scale,color)
-    
+The script is used to visualize the stress heterogeneity associated with
+	varying normal directors of weak anisotropy. 
+Function dependency: the script calls on the following functions:
+	analytic: FORM: [d,sig11,sig12,sig22,u1, p] = analytic(a1, a2 , n1, n2, es, e, dd)
+	calc_principle: FORM: calc_principle(sxx,syy,sxy)
+	draw_bar_for_principle_stress: FORM: draw_bar_for_principle_stress(s,nx,ny,cx,cy,scale,color)
+%}
+
 contrast0 = [2,10,100]; % the contrast between the strong and weak viscosities.
 col=['k','r','b'];
 for i = 1:length(contrast0)

@@ -5,8 +5,97 @@ import math
 # 
 def prepare_case(case, path, name, n, delta, alpha):
     
-    
-    if case == 30:
+    if case == 26:   
+        print('Simulating Case 26: Same as 2D analytic solution. Horizontal anisotropic layer subjected to simple shear.')
+        
+        # Defining norms. For 2D cases, norm1 and norm3 are used.
+        theta = 90 + delta
+        norm1, norm2, norm3 = cos(theta/180*math.pi), 0, sin(theta/180*math.pi)       
+
+        dim = 2
+
+        len1, len2 = 5, 1
+        nx = 5*n
+        ny = n
+        de = 1/n
+        mesh = RectangleMesh(Point(0, 0), Point(len1, len2), nx, ny, "crossed")
+
+        # Sub domain for Periodic boundary condition
+        class PeriodicBoundary(SubDomain):
+            # Left boundary is "target domain" G
+            def inside(self, x, on_boundary):
+                return bool(x[0] < DOLFIN_EPS and x[0] > -DOLFIN_EPS and on_boundary)
+                #return bool(near(x[0],0)) and (not(near(x[0],len1)))
+            # Map right boundary (H) to left boundary (G)
+            def map(self, x, y):
+                y[0] = x[0] - len1
+                y[1] = x[1]
+
+        # Create periodic boundary condition
+        pbc = PeriodicBoundary()#PeriodicBoundary()  
+
+        # Define function spaces
+        V = VectorFunctionSpace(mesh, "CG", 2)  
+        Q = FunctionSpace(mesh, "CG", 1)
+
+        #W = V * Q # This expression is outdated
+        New_element = MixedElement([V.ufl_element(), Q.ufl_element()])
+        W = FunctionSpace(mesh, New_element, constrained_domain=pbc)
+
+        # Boundaries
+        boundaries = MeshFunction("size_t", mesh, dim-1)
+
+        class Top_boundary(SubDomain):
+            def inside(self, x, on_boundary):
+                #return x[1] > (len2 - DOLFIN_EPS) and on_boundary
+                return near(x[1], len2, DOLFIN_EPS) and on_boundary
+
+        class Bottom_boundary(SubDomain):
+            def inside(self, x, on_boundary):
+                #return x[1] < DOLFIN_EPS and on_boundary
+                return near(x[1], 0.0, DOLFIN_EPS) and on_boundary
+        class Left_boundary(SubDomain):
+            def inside(self, x, on_boundary):
+                #return x[0] < DOLFIN_EPS and on_boundary
+                return near(x[0], 0, DOLFIN_EPS) and on_boundary
+
+        class Right_boundary(SubDomain):
+            def inside(self, x, on_boundary):
+                #return x[0] > (len1 - DOLFIN_EPS) and on_boundary    
+                return near(x[0], len1, DOLFIN_EPS) and on_boundary
+        boundaries.set_all(0)
+        Top_boundary().mark(boundaries, 1)
+        Bottom_boundary().mark(boundaries, 2)
+        Left_boundary().mark(boundaries, 3)
+        Right_boundary().mark(boundaries, 4)
+        # Rename boundaries
+        top = 1
+        bottom = 2
+        west = 3
+        east = 4
+
+        class Omega_0(SubDomain):
+            def inside(self, x, on_boundary):
+                return x[1] >= 0.5 and x[1] <= 0.9 # Anisotropic layer depth between 0.5 and 0.9.
+            
+        mf = MeshFunction("size_t", mesh, 2)
+
+        subdomain0 = Omega_0()
+        mf.set_all(0)
+        
+        subdomain0.mark(mf,1) # 1, the middle anisotrpic layer.
+        bound_name_list = {'bottom':bottom,
+                           'top':top,
+                           'west':west,
+                           'east':east,
+                           'anis_domain':1,
+                           'iso_domain':0}
+
+        bcs = [DirichletBC(W.sub(0), Constant((1.0, 0.0)), boundaries, top),
+               DirichletBC(W.sub(0), Constant((0.0,0.0)), boundaries, bottom)]
+        f = Constant((0.0, 0.0))    
+        
+    elif case == 30:
         print('Simulating Case 30: 3D box model with a horizontal anisotropic layer.')
         
         theta = delta

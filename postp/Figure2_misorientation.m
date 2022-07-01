@@ -1,14 +1,14 @@
 clear all; close all;
-% 3/8/2022. Change bar colors. Make is dimensional. Add models. 
-% 3/3/2022. Add pressure for all theta cases.
-% Created by Dunyu Liu and documented on 2/28/2022. 
-% The script is used to visualize the stress heterogeneity associated with
-% varying normal directors of weak anisotropy. 
-% Function dependency: the script calls on the following functions:
-    % analytic: FORM: [d,sig11,sig12,sig22,u1, p] = analytic(a1, a2 , n1, n2, es, e)
-    % calc_principle: FORM: calc_principle(sxx,syy,sxy)
-    % draw_bar_for_principle_stress: FORM: draw_bar_for_principle_stress(s,nx,ny,cx,cy,scale,color)
-    
+%{ 
+Summary:
+The script is used to visualize the stress heterogeneity associated with
+	varying normal directors of weak anisotropy calculated by the analytic solution. 
+Function dependency: the script calls on the following functions:
+	analytic: FORM: [d,sig11,sig12,sig22,u1, p] = analytic(a1, a2 , n1, n2, es, e)
+	alc_principle: FORM: calc_principle(sxx,syy,sxy)
+	draw_bar_for_principle_stress: FORM: draw_bar_for_principle_stress(s,nx,ny,cx,cy,scale,color)
+%}
+
 model = 1; % 
 % -- 1: dimensionless case;
 % -- 2: geological dimension;
@@ -107,6 +107,13 @@ for i = 1:length(deg)
         plot(max_shear_rec(:,i),y4p(:,i),'LineWidth',2); hold on; 
     end
 end
+x1 = -1.1:0.01:-0.2;
+y1 = x1*0 -0.65; 
+y2 = x1*0 -0.45;
+hold on;
+fill([x1 fliplr(x1)], [y1 fliplr(y2)], [0.9 0.9 0.9]);
+set(gca,'children',flipud(get(gca,'children')))
+xlim([-1.05,-0.2]);
 xlabel('Maximum shear stress'); ylabel('Width');
 set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
 
@@ -116,9 +123,21 @@ for i = 1:length(deg)
         plot(p_rec(:,i),y4p(:,i),'LineWidth',2); hold on;
     end
 end
-legend('2.5','12.5','22.5','32.5','42.5');
+x1 = 0:0.01:0.65;
+y1 = x1*0 -0.65; 
+y2 = x1*0 -0.45;
+hold on;
+fill([x1 fliplr(x1)], [y1 fliplr(y2)], [0.9 0.9 0.9]);
+set(gca,'children',flipud(get(gca,'children')))
+xlim([0 0.65]);
+legend('', '\theta=2.5','\theta=12.5','\theta=22.5','\theta=32.5','\theta=42.5','Location','southeast');
 xlabel('Pressure'); ylabel('Width');
 set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
+annotation('textbox', [0.035, 0.86, 0, 0], 'string', '(a)','Fontsize', 18, 'Fontweight', 'bold');
+annotation('textbox', [0.035, 0.62, 0, 0], 'string', '(b)','Fontsize', 18, 'Fontweight', 'bold');
+annotation('textbox', [0.465, 0.62, 0, 0], 'string', '(c)','Fontsize', 18, 'Fontweight', 'bold');
+
+
 
 h2 = figure(2);
 set(h2, 'position', [1050,50, 800, 800]);
