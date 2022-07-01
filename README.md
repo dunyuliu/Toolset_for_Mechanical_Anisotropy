@@ -26,7 +26,7 @@ The /postp folder also contains Matlab post-processing scripts to plot figures p
 The /postp/colormap/crameri contains the colormap from Fabio Crameri, cited as Crameri, Fabio. Scientific Colour Maps. Zenodo, 2019, doi:10.5281/ZENODO.1243862, and downloadable from this [link](https://www.mathworks.com/matlabcentral/fileexchange/68546-crameri-perceptually-uniform-scientific-colormaps). For usage and distribution, please refer the license.txt under /postp/colormap/crameri. 
 
 ### Results
-The /res folder contains simulation results in .h5 and .xdmf formats for velocity, stress, strain_rate, and pressure. 
+The /res folder contains simulation results in .h5 and .xdmf formats for velocity, stress, strain_rate, and pressure. Currently, case 26, case 30, 31, and 23 are supported.
 
 ### Mesh and others
 The /msh contains the mesh files for case 32, created by Gmsh and converted to formats readable from FEniCS. 
