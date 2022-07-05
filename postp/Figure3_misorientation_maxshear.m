@@ -20,7 +20,7 @@ function plot_misorientation_maxshear(contrast, cstr)
 
 e = 1; % strong viscosity/isotropic viscosity.
 es = e/contrast; % weak viscosity.
-deg = 0:2.5:90; % the angles that define the normal vectors of weak anisotropy.
+deg = 0:0.1:90; % the angles that define the normal vectors of weak anisotropy.
 a1 = -0.5; a2 = -0.1; % the depth of the bottom & top of the anisotropic layer. 
 dd = 0.1;
 w = 1; 
@@ -81,7 +81,7 @@ p2(:) = p_rec(loc_iso_id,:);
 maxshear2(:) = max_shear_rec(loc_iso_id,:);
 
 h1 = figure(1);
-set(h1, 'position', [50,50, 1000, 1000]);
+set(h1, 'position', [10,10, 1000, 1000]);
 
 subplot(2,2,1)
 plot(deg,ang_stress(:), strcat(cstr,':'), 'Linewidth',2); hold on;
