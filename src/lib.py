@@ -21,4 +21,17 @@ class K(UserExpression):
             values[0] = self.k_1
     def values_shape(self):
         return (1,)
-    
+
+
+def mpi_write_xdmf(mesh, var, varName, path, fileNamePrefix, fileNameSuffix):
+    fullPath  = path + fileNamePrefix + varName + fileNameSuffix
+    fid       = XDMFFile(mesh.mpi_comm(), fullPath)
+    fid.parameters["functions_share_mesh"]  = True
+    fid.parameters["rewrite_function_mesh"] = False
+    fid.write(var)
+
+def serial_write_xdmf(mesh, var, varName, path, fileNamePrefix, fileNameSuffix):
+    fullPath  = path + fileNamePrefix + varName + fileNameSuffix
+    fid       = XDMFFile(fullPath)
+    fid.write(var)
+        
