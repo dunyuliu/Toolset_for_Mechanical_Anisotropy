@@ -11,85 +11,53 @@ clear all; close all;
 % The scripts calls functions 
 % -calc_principal_3d.m and
 % -draw_bar_for_principle_3d.m.
-model = 1;
-if model == 1
-    path = '../res/case32/20220629/'; % Simulated on 20220121 for more thetas. 
-    plot_or_not = 1;
-    ny = 40;
-    mid_cell_x = 2.5042; mid_cell_y = 0.7125;
-    %the = 0:2.5:90;
-    the = 30;
-    nm = length(the);
-    ang_rec = zeros(3,nm);    
-end
+figurePosition = [50 50 500 500];
+path = '../res/case32/20220629/'; % Simulated on 20220121 for more thetas. 
+theta = 30;
+hete = 1; 
+geo = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/geometry')';
+elems = double(h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/topology'))'+1;
+x = geo(:,1); y = geo(:,2); z = geo(:,3);
+% quadratic elements
+uFE = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+ux = uFE(:,1); uy = uFE(:,2); uz = uFE(:,3);
 
+% Simply use the stokes demo definition for p.
+% For CG1 and DG1, p is defined on nodes.
+p = h5read(strcat(path,'pressure_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+%p=-p;
+StressFE = h5read(strcat(path,'stress_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+sxx0 = StressFE(:,1); sxy0 = StressFE(:,2); sxz0 = StressFE(:,3);
+syy0 = StressFE(:,5); syz0 = StressFE(:,6);
+szz0 = StressFE(:,9); 
+%sxx0 = sxx0-p;
+%syy0 = syy0-p;
+Strain_rate = h5read(strcat(path,'strain_rate_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
+srxx0 = Strain_rate(:,1); srxy0 = Strain_rate(:,2); srxz0 = Strain_rate(:,3);
+sryy0 = Strain_rate(:,5); sryz0 = Strain_rate(:,6);
+srzz0 = Strain_rate(:,9);
 
-%colormap cool; 
-Number_of_Colors = 21;
-pos = [10, 50, 1450, 1450];
-pos1 = [10, 50, 800, 900];
-p_or_J2 = 0; % 0: use pressure as the background; 1: use J2 of stress tensor as background.
-% If n is 40, ny should be 40.
-ny = 40; nx = 5*ny;
-meshstyle = 'crossed';
-fac=2; % for crossed mesh
-dny = 4; dnx = 20*fac;
-dx = 1/ny;
-totm = 4; nfigx = 4; nfigy = 1;
+nele = size(elems,1);
 
-% add some basic parameters for analytic solution.
-e = 1; es = 0.1; a1 = 0.5; a2 = 0.9; 
-for m = 1:nm
-    theta = the(m);
-    hete = 1; 
-    nfig = m;
-    if m>=4
-        nfig = 4;
-    end    
+for i = 1:nele
+    x0 = 0;
+    y0 = 0;
+    z0 = 0;
+    for j = 1:4
+        x0 = geo(elems(i,j),1) + x0;
+        y0 = geo(elems(i,j),2) + y0;
+        z0 = geo(elems(i,j),3) + z0;
+    end
+    C(i,1) = x0/4;
+    C(i,2) = y0/4;
+    C(i,3) = z0/4;      
     
-    geo = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/geometry')';
-    elems = double(h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/Mesh/mesh/topology'))'+1;
-    x = geo(:,1); y = geo(:,2); z = geo(:,3);
-    % quadratic elements
-    uFE = h5read(strcat(path,'velocity_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    ux = uFE(:,1); uy = uFE(:,2); uz = uFE(:,3);
-    
-    % Simply use the stokes demo definition for p.
-    % For CG1 and DG1, p is defined on nodes.
-    p = h5read(strcat(path,'pressure_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    %p=-p;
-    StressFE = h5read(strcat(path,'stress_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    sxx0 = StressFE(:,1); sxy0 = StressFE(:,2); sxz0 = StressFE(:,3);
-    syy0 = StressFE(:,5); syz0 = StressFE(:,6);
-    szz0 = StressFE(:,9); 
-    %sxx0 = sxx0-p;
-    %syy0 = syy0-p;
-    Strain_rate = h5read(strcat(path,'strain_rate_theta',num2str(theta,'%.1f'),'_hetero_',num2str(hete),'.h5'),'/VisualisationVector/0')';
-    srxx0 = Strain_rate(:,1); srxy0 = Strain_rate(:,2); srxz0 = Strain_rate(:,3);
-    sryy0 = Strain_rate(:,5); sryz0 = Strain_rate(:,6);
-    srzz0 = Strain_rate(:,9);
-
-    nele = size(elems,1);
-
-    for i = 1:nele
-        x0 = 0;
-        y0 = 0;
-        z0 = 0;
-        for j = 1:4
-            x0 = geo(elems(i,j),1) + x0;
-            y0 = geo(elems(i,j),2) + y0;
-            z0 = geo(elems(i,j),3) + z0;
-        end
-        C(i,1) = x0/4;
-        C(i,2) = y0/4;
-        C(i,3) = z0/4;      
-        
 %         stmp = [sxx0(i),syy0(i),szz0(i),sxy0(i),sxz0(i),syz0(i)];
 %         [V, D] = calc_principal_3d(stmp); 
 %         sp(i,1) = D(1,1); sp(i,2) = D(2,2); sp(i,3) = D(3,3);
 %         n1(i,1:3) = V(1:3,1)'; n2(i,1:3) = V(1:3,2)'; n3(i,1:3) = V(1:3,3)'; 
-    end
 end
+
 %% 
 Fn=scatteredInterpolant(geo(:,1),geo(:,2),geo(:,3),p);
 F_ux=scatteredInterpolant(geo(:,1),geo(:,2),geo(:,3),ux);
@@ -120,7 +88,7 @@ F_sryz=scatteredInterpolant(C(:,1),C(:,2),C(:,3),sryz0(:));
 % F_n3y=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n3(:,2));
 % F_n3z=scatteredInterpolant(C(:,1),C(:,2),C(:,3),n3(:,3));
 
-dx = 0.1;
+dx = 0.2;
 lenx1 = 2.5; lenx2 = 7.5;
 leny1 = 2.5; leny2 = 7.5;
 lenz1 = -2; lenz2 = 0;
@@ -189,35 +157,10 @@ for i = 1:m
     end
 end
 
-h=figure(1);
-set(h, 'position', [50 50 1000 800]);
-
-% These cross sections view are not very useful.
-
-% subplot(3,2,1)
-% slice(xq,yq,zq,Vq_ux, 5, 0, -0.5);
-% shading flat; crameri('vik', Number_of_Colors); colorbar;
-% xlabel('X'); ylabel('Y'); zlabel('Z'); 
-% title('Velocity-x'); 
-% set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
-% 
-% subplot(3,2,2)
-% slice(xq,yq,zq,Vq, 5, 0, -0.5);
-% shading flat; crameri('vik', Number_of_Colors); colorbar;
-% xlabel('X'); ylabel('Y'); zlabel('Z'); 
-% title('Pressure');
-% set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
-% 
-% subplot(3,2,3)
-% slice(xq,yq,zq,I2, 5, 0, -0.5);
-% shading flat; crameri('vik', Number_of_Colors); colorbar;
-% xlabel('X'); ylabel('Y'); zlabel('Z'); 
-% title('2nd Stress Invariant');
-% set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
-
+tag = 0;
 for ifig = 1:3
     h = figure(ifig);
-    set(h, 'position', [50 50 1000 800]);
+    set(h, 'position', figurePosition);
     for ix = 1:2:m
         for iy = 1:2:l
             for iz = 1:1:n    
@@ -231,15 +174,22 @@ for ifig = 1:3
                     nx = n1x(ix,iy,iz);
                     ny = n1y(ix,iy,iz);
                     nz = n1z(ix,iy,iz);
-                    color = 'k'; scale = 0.3;
+                    color = 'k'; scale = 0.5;
                     draw_bar_for_principal_3d(1,nx,ny,nz,cx,cy,cz,scale,color);
 
                     s = srp1(ix,iy,iz);
                     srnx = srn1x(ix,iy,iz);
                     srny = srn1y(ix,iy,iz);
                     srnz = srn1z(ix,iy,iz);
-                    color = 'r'; scale = 0.28;
+                    color = 'r'; scale = 0.3;
                     draw_bar_for_principal_3d(1,srnx,srny,srnz,cx,cy,cz,scale,color);
+                    
+                    
+                    if cx<5.5 && cx>5 && cy<5 && cy>4.5 && cz>-1
+                        tag = tag + 1;
+                        atmp = funcCalcAngle([nx,0,nz],[srnx,0,srnz]);
+                        loc_ang(tag,1:4) = [cx,cy,cz,atmp];
+                    end
                     %quiver3(xq(ix,iy,iz),yq(ix,iy,iz),zq(ix,iy,iz),n1x(ix,iy,iz),n1y(ix,iy,iz),n1z(ix,iy,iz),0.2, 'k'); hold on;
                     %quiver3(xq(ix,iy,iz),yq(ix,iy,iz),zq(ix,iy,iz),n3x(ix,iy,iz),n3y(ix,iy,iz),n3z(ix,iy,iz),0.2, 'r'); hold on;
                 end
@@ -250,13 +200,13 @@ for ifig = 1:3
     
     if ifig == 1
         view([0 1 0]); xlim([2.5 7.5]); zlim([-2 0]);
-        title('Principal Stress (black) vs Strain Rate (red)');
+        %title('Principal Stress (black) vs Strain Rate (red)');
     elseif ifig == 2
         view([1 0 0]); ylim([2.5 7.5]); zlim([-2 0]);
-        title('Principal Stress (black) vs Strain Rate (red)');
+        %title('Principal Stress (black) vs Strain Rate (red)');
     elseif ifig == 3
         view([0 0 1]); xlim([2.5 7.5]); ylim([2.5 7.5]);
-        title('Principal Stress (black) vs Strain Rate (red) - map view');
+        %title('Principal Stress (black) vs Strain Rate (red) - map view');
     end
     set(gca, 'Fontsize', 12, 'Fontweight', 'bold');
     set(gcf, 'color', 'white'); 
