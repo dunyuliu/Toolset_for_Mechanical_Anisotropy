@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from analytic import *
 
-print('Example usage: python main.py theta')
+print('Example usage: python run_analytic.py theta')
 
 # setting up model parameters
 a1 = -0.5 # bottom depth of the anisotropic layer
