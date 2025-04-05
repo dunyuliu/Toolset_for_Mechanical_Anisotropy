@@ -21,9 +21,15 @@ def analytic(a1, a2, w, ux0, n1, n2, es, e, dd):
     """
     d_w = (a2 - a1) / w
     ux0_w = ux0 / w
-    tmp = d_w + (1 - (1 - es / e) * (1 - 4 * n1**2 * n2**2)) * (1 - d_w)
-    s2 = ux0_w / tmp  # p_u1/p_y
-    s1 = (ux0_w - s2 * d_w) / (1 - d_w)
+    
+    denom = 1 - (1 - es / e) * (1 - 4 * n1**2 * n2**2) * (1 - d_w)
+    nom = 1 - (1 - es / e) * (1 - 4 * n1**2 * n2**2)
+
+    s1 = ux0_w * nom / denom
+    s2 = ux0_w / denom
+
+#    s2 = ux0_w / tmp  # p_u1/p_y
+#    s1 = (ux0_w - s2 * d_w) / (1 - d_w)
     
     d = np.arange(-w, 0 + dd, dd)  # Creating the depth array
     
@@ -72,8 +78,12 @@ def calc_principal(sxx, syy, sxy):
         nx0, ny0, nx1, ny1: Unit vectors for smax and smin orientations.
         J2: Second invariant of the stress tensor.
     """
-    t = np.degrees(np.arctan2(2 * sxy, (sxx - syy))) / 2
+    sig = np.array([
+    [sxx, sxy],
+    [sxy, syy]])
     
+    t = np.degrees(np.arctan2(2 * sxy, (sxx - syy))) / 2
+
     Q = np.array([[np.cos(np.radians(t)), np.sin(np.radians(t))],
                   [-np.sin(np.radians(t)), np.cos(np.radians(t))]])
     
@@ -89,24 +99,26 @@ def calc_principal(sxx, syy, sxy):
     if abs(princ_s[0, 1]) > tol:
         _ = princ_s[0, 1]
     
-    if sig1 <= sig2:  # Negative compressional
-        smax = sig1
-        smin = sig2
-        nx0 = np.cos(np.radians(t))
-        ny0 = -np.sin(np.radians(t))
-        nx1 = np.sin(np.radians(t))
-        ny1 = np.cos(np.radians(t))
-    else:
-        smax = sig2
-        smin = sig1
-        nx0 = np.sin(np.radians(t))
-        ny0 = np.cos(np.radians(t))
-        nx1 = np.cos(np.radians(t))
-        ny1 = -np.sin(np.radians(t))
+    smax = sig1
+    smin = sig2
+    nx0 = np.cos(np.radians(t))
+    ny0 = -np.sin(np.radians(t))
+    nx1 = np.sin(np.radians(t))
+    ny1 = np.cos(np.radians(t))
     
+    # using numpy linalg to compute eig values and vecs. 
+
+    eigvals, eigvecs = np.linalg.eigh(sig) 
+    sig1, sig2 = eigvals
+    dir1 = eigvecs[:,0]
+    dir2 = eigvecs[:,1] 
+
+    smax, smin = sig1, sig2 
+    dirmax, dirmin = dir1, dir2
+
     J2 = sxx * syy - sxy**2
     
-    return smax, smin, nx0, ny0, nx1, ny1, J2
+    return smax, smin, dirmax, dirmin, J2
 
 
 
