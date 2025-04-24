@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from analytic import *
 
-print('Example usage: python run_analytic.py theta')
+print('Example usage: python main.py theta')
 
 # setting up model parameters
 a1 = -0.5 # bottom depth of the anisotropic layer
@@ -33,9 +33,22 @@ print(' ')
 print('********* results *********')
 print(f"1. Normal director to weak anisotropy direction rotates counterclockwisely from y+ at {theta:.2f} degs")
 print('2. Stress tensor [sxx, syy, sxy] = ', [sig11[id-1], sig22[id-1], sig12[id-1]])
+print('2. Strain rate tensor [srxx, sryy, srxy] = ', [str11[id-1], str22[id-1], str12[id-1]])
 print(f"3. Principal stresses smax and smin are ", smax, smin)
 print(f"4. Rotate from the x axis clockwisely {-theta_sigma_max:.2f} to get the maximum compressive s_max")
 print(f"5. Principal strain rate eps_max and eps_min are ", srmax, srmin)
 print(f"6. Rotate from the x axis counterclockwisely {theta_eps_min:.2f} to get the minimum/extensional eps_min")
 
 print(f"Strain localization is {srJ2/srJ2_iso:.2f}")
+
+# angles CCW from y+
+theta_n_deg = theta
+theta_sigma_deg = 90-(-theta_sigma_max)
+theta_eps_deg = theta_eps_min
+plot_vectors_and_save(theta_n_deg,
+                    theta_sigma_deg,
+                    theta_eps_deg,
+                    strain_enhance=srJ2/srJ2_iso,
+                    viscosity_contrast=e/es,
+                    outfile=f"viscosity_contrast{e/es}_n_theta{theta}_strainEnhance{srJ2/srJ2_iso:.2f}.png",
+                    dpi=300)
